@@ -2,9 +2,11 @@
 
 namespace Sawirricardo\IcdApi\Data;
 
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
 use Sammyjo20\Saloon\Http\SaloonResponse;
 
-class AccessTokenData
+class AccessTokenData implements Arrayable, Jsonable
 {
     public function __construct(
         public string $accessToken,
@@ -25,5 +27,19 @@ class AccessTokenData
     public static function fromSaloon(SaloonResponse $response): static
     {
         return static::fromArray($response->json());
+    }
+
+    public function toArray()
+    {
+        return [
+            'access_token' => $this->accessToken,
+            'token_type' => $this->tokenType,
+            'expires_in' => $this->expiresIn,
+        ];
+    }
+
+    public function toJson($options = 0)
+    {
+        return json_encode($this->toArray(), $options);
     }
 }
